@@ -1,0 +1,93 @@
+MOV R3, #01H  # tracking the rolling  
+
+MOV R6, #00H  #'Register r6 is track the no of numbers to take the last 2 digits
+
+MOV R1, #39H  #pointer to the memorory when we give input
+
+LABEL: LCALL 02A2
+
+
+MOV R0, A
+SUBB A, #1FH        # checking for excec value
+
+JZ SHOW             #if zero  is in accumulator print 
+                    #values on to the leds
+MOV A, R0           
+SUBB A, #14H        #checking if the value is NEXT 
+
+JZ L1               # L1 for next subroutine 
+INC R6              #                 
+INC R1              # 
+MOV A, RO           #                     
+MOV @R1, A          #                     
+MOV A, #03H         #                 
+
+CJNE 06H(R6), LABEL  // comment
+
+
+MOV A, R0
+DEC R1
+XCH @R1, A
+DEC R1
+XCH @R1, A
+INC R1
+DEC R6
+LJUMP LABEL
+
+
+SHOW: MOV R2, #04  #when press execute this is called
+
+MOV A, R3
+MOV R4, #04
+
+SUBB A R4
+JNZ, L3
+
+MOV R1, #39H
+
+L2: INC R1
+MOV A, @R1
+MOV B, #10H
+
+
+MUL AB
+INC R1
+ADD A, @R1
+MOV R0, A
+DPTR #EC01
+
+
+MOV A, 94H
+
+SUBB A, R2
+MOVX @DPTR, A
+MOV A, RO
+MOV DPTR, #9000
+
+
+MOVC A, @DPTR+A
+MOV DPTR,#EC00
+
+
+MOVX @DPTR, A
+DJNZ R2, L2
+
+LCALL 02A2H
+
+
+LJUMP 0000H
+
+
+L3: MOV B, #02H 
+
+MUL AB   # 10's and then added
+ADD A, #39H
+
+MOV R1, A
+LUMP L2             
+
+
+L1:  INC R3             # increase r3 for next input 
+     MOV R6, #00H
+     
+     LJUMP LABEL. 
